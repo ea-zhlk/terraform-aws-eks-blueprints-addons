@@ -2446,7 +2446,7 @@ module "external_secrets" {
   # IAM role for service account (IRSA)
   set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = try(var.external_secrets.create_role, true)
-  create_policy                 = try(var.external_secrets.create_policy, true)
+  create_policy                 = try(var.external_secrets.create_policy, false)
   role_name                     = try(var.external_secrets.role_name, "external-secrets")
   role_name_use_prefix          = try(var.external_secrets.role_name_use_prefix, true)
   role_path                     = try(var.external_secrets.role_path, "/")
