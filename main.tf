@@ -2329,7 +2329,7 @@ locals {
 }
 
 data "aws_iam_policy_document" "external_secrets" {
-  count = var.enable_external_secrets ? 1 : 0
+  count = var.external_secrets.create_policy ? 1 : 0
 
   source_policy_documents   = lookup(var.external_secrets, "source_policy_documents", [])
   override_policy_documents = lookup(var.external_secrets, "override_policy_documents", [])
@@ -2446,6 +2446,7 @@ module "external_secrets" {
   # IAM role for service account (IRSA)
   set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = try(var.external_secrets.create_role, true)
+  create_policy                 = try(var.external_secrets.create_policy, true)
   role_name                     = try(var.external_secrets.role_name, "external-secrets")
   role_name_use_prefix          = try(var.external_secrets.role_name_use_prefix, true)
   role_path                     = try(var.external_secrets.role_path, "/")
@@ -2453,7 +2454,7 @@ module "external_secrets" {
   role_description              = try(var.external_secrets.role_description, "IRSA for external-secrets operator")
   role_policies                 = lookup(var.external_secrets, "role_policies", {})
 
-  source_policy_documents = data.aws_iam_policy_document.external_secrets[*].json
+  source_policy_documents = try(data.aws_iam_policy_document.external_secrets[*].json, [])
   policy_statements       = lookup(var.external_secrets, "policy_statements", [])
   policy_name             = try(var.external_secrets.policy_name, null)
   policy_name_use_prefix  = try(var.external_secrets.policy_name_use_prefix, true)
