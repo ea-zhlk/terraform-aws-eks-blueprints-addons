@@ -185,6 +185,8 @@ module "argocd" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.1"
 
+  depends_on = [module.ingress_nginx]
+
   create = var.enable_argocd
 
   # Disable helm release
@@ -2682,6 +2684,7 @@ module "ingress_nginx" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.1"
 
+  depends_on = [module.aws_load_balancer_controller]
   create = var.enable_ingress_nginx
 
   # Disable helm release
