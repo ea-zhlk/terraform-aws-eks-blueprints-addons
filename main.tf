@@ -244,7 +244,7 @@ module "argocd" {
   role_path                     = try(var.argocd.role_path, "/")
   role_permissions_boundary_arn = try(var.argocd.role_permissions_boundary_arn, null)
   role_description              = try(var.argocd.role_description, "IRSA for argocd project")
-  role_policies                 = lookup(var.argocd, "role_policies", null)
+  role_policies                 = lookup(var.argocd, "role_policies", {})
   create_policy                 = try(var.argocd.create_policy, false)
 
   oidc_providers = {
