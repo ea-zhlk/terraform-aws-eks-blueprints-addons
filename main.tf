@@ -2353,7 +2353,7 @@ locals {
 }
 
 data "aws_iam_policy_document" "external_secrets" {
-  count = var.enable_external_secrets && var.external_secrets.create_policy ? 1 : 0
+  count = try(var.external_secrets.create_policy, false) ? 1 : 0
 
   source_policy_documents   = lookup(var.external_secrets, "source_policy_documents", [])
   override_policy_documents = lookup(var.external_secrets, "override_policy_documents", [])
