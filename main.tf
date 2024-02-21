@@ -180,6 +180,9 @@ module "argo_workflows" {
 ################################################################################
 # ArgoCD
 ################################################################################
+locals {
+  argocd_service_account = try(var.argocd.service_account_name, "argocd-server")
+}
 
 module "argocd" {
   source  = "aws-ia/eks-blueprints-addon/aws"
@@ -232,6 +235,25 @@ module "argocd" {
   postrender    = try(var.argocd.postrender, [])
   set           = try(var.argocd.set, [])
   set_sensitive = try(var.argocd.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  create_role                   = try(var.argocd.create_role, true)
+  role_name                     = try(var.argocd.role_name, "argocd-sa")
+  role_name_use_prefix          = try(var.argocd.role_name_use_prefix, true)
+  role_path                     = try(var.argocd.role_path, "/")
+  role_permissions_boundary_arn = try(var.argocd.role_permissions_boundary_arn, null)
+  role_description              = try(var.argocd.role_description, "IRSA for argocd project")
+  role_policies                 = lookup(var.argocd, "role_policies", null)
+  create_policy                 = try(var.argocd.create_policy, false)
+
+  oidc_providers = {
+    this = {
+      provider_arn = local.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.argocd_service_account
+    }
+  }
 
   tags = var.tags
 }
@@ -2685,7 +2707,7 @@ module "ingress_nginx" {
   version = "1.1.1"
 
   depends_on = [module.aws_load_balancer_controller]
-  create = var.enable_ingress_nginx
+  create     = var.enable_ingress_nginx
 
   # Disable helm release
   create_release = var.create_kubernetes_resources
