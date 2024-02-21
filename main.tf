@@ -246,7 +246,7 @@ module "argocd" {
   role_description              = try(var.argocd.role_description, "IRSA for argocd project")
   role_policies                 = lookup(var.argocd, "role_policies", {})
   create_policy                 = try(var.argocd.create_policy, false)
-
+  allow_self_assume_role        = try(var.argocd.allow_self_assume_role, true)
   oidc_providers = {
     this = {
       provider_arn = local.oidc_provider_arn
