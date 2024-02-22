@@ -241,6 +241,7 @@ module "argocd" {
     "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
     "applicationSet.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
   ]
+  assume_role_condition_test    = try(var.argocd.assume_role_condition_test, "StringLike")
   create_role                   = try(var.argocd.create_role, true)
   role_name                     = try(var.argocd.role_name, "argocd-sa")
   role_name_use_prefix          = try(var.argocd.role_name_use_prefix, true)
