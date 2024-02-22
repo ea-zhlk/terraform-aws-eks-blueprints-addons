@@ -237,7 +237,10 @@ module "argocd" {
   set_sensitive = try(var.argocd.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_names                = ["server.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  set_irsa_names = ["server.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
+    "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
+    "applicationSet.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  ]
   create_role                   = try(var.argocd.create_role, true)
   role_name                     = try(var.argocd.role_name, "argocd-sa")
   role_name_use_prefix          = try(var.argocd.role_name_use_prefix, true)
